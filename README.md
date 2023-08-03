@@ -1,1 +1,1 @@
-# SteamRecommender
+# CSGO-Clans
