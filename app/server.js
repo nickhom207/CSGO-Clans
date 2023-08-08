@@ -24,9 +24,38 @@ app.use(express.static("public"));
 app.use(express.text());
 
 
-app.get("/", (req,res) => {
+app.get("/create-clan", (req, res) => {
+    let name = req.query.name;
+    if (name === "" || name === null) {
+        return res.sendStatus(400);
+    }
 
+    let desc = req.query.desc;
+    if (desc.length > 100) {
+        return res.sendStatus(400);
+    }
+
+    let unique_id = req.query.unique_id;
+    if (unique_id.length !== 7) {
+        return res.sendStatus(400);
+    }
+
+    let public = req.query.public;
+    if (public !== "true" && public !== "false") {
+        return res.sendStatus(400);
+    }
+
+    let userid = [""];
+    pool.query(
+        `INSERT INTO clans(clan_name, clan_description, clan_chat, member_ids, unique_id, public) 
+        VALUES($1, $2, $3, $4, $5, $6)
+        RETURNING *`,
+        [name, desc, {}, userid, unique_id, public]
+    );
+    console.log("Created Clan");
+    res.sendStatus(200);
 });
+
 
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
