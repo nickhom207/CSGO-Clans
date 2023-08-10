@@ -24,8 +24,8 @@ CREATE TABLE clans (
 
 
 -- Dummy data for users table:
-INSERT INTO users (steamid, username, region, calendar, clans, token) VALUES ('76561198025039300', 'Kenny', 'PA', '{"events":[]}', '{}');
-INSERT INTO users (steamid, username, region, calendar, clans, token) VALUES ('76561198025039301', 'IronMan', 'PA', '{"events":[]}', '{}');
+INSERT INTO users (steamid, username, region, calendar, clans) VALUES ('76561198025039300', 'Kenny', 'PA', '{"events":[]}', '{}');
+INSERT INTO users (steamid, username, region, calendar, clans) VALUES ('76561198025039301', 'IronMan', 'PA', '{"events":[]}', '{}');
 
 
 -- Dummy data for clans table:
