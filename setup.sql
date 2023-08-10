@@ -9,7 +9,8 @@ CREATE TABLE users (
 	username text,
 	region text,
     calendar json,
-    clans text[]
+    clans text[],
+    token text
 );
 
 CREATE TABLE clans (
@@ -18,7 +19,8 @@ CREATE TABLE clans (
 	clan_description text,
 	clan_chat json,
     member_ids text[],
-    unique_id varchar(7)
+    unique_id text,
+    public boolean
 );
 
 
