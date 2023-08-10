@@ -10,6 +10,8 @@ app.use(express.static("public"));
 
 const env = require("../env.json");
 
+const session = require("express-session");
+
 let apiKey = env["api_key"];
 let baseUrl = env["api_url"];
 
@@ -22,6 +24,19 @@ pool.connect().then(function () {
 app.use(express.static("public"));
 
 app.use(express.text());
+
+app.use(session( {
+    secret: "key",
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.get("/", (req, res) => {
+    req.session.isAuth = true;
+    console.log(req.session);
+    console.log(req.session.id);
+    res.send("hi");
+});
 
 
 app.get("/create-clan", (req, res) => {
