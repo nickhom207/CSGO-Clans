@@ -135,7 +135,6 @@ app.post("/join-clan", (req, res) => {
 
 app.get("/user_clan", (req, res) => {
     if(req.query.userID) {
-        // let genre = req.query.genre;
         res.status(200);
         pool.query(
             `SELECT * FROM users WHERE id = $1`,
