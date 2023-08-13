@@ -11,6 +11,7 @@ app.use(express.static("public"));
 const env = require("../env.json");
 
 const session = require("express-session");
+const cookieParser = require("cookie-parser");
 
 let apiKey = env["api_key"];
 let baseUrl = env["api_url"];
@@ -24,51 +25,112 @@ pool.connect().then(function () {
 app.use(express.static("public"));
 
 app.use(express.text());
+app.use(express.json());
+app.use(cookieParser());
 
-app.use(session( {
+let tokens = {};
+
+app.use(session({
     secret: "key",
     resave: false,
     saveUninitialized: false
 }));
 
-app.get("/", (req, res) => {
-    req.session.isAuth = true;
-    console.log(req.session);
-    console.log(req.session.id);
-    res.send("hi");
+function getToken(obj) {
+    return obj["connect.sid"].substring(2).split(".")[0];
+}
+
+app.post("/login-page", (req, res) => {
+    let steamid = req.body.id;
+    req.session.isAuth = true;  //TODO: Delete this once login system is finished
+    if (tokens[req.session.id] === undefined) {
+        tokens[req.session.id] = steamid;
+    }
+    console.log(tokens);
+    res.sendStatus(200);
 });
 
 
-app.get("/create-clan", (req, res) => {
-    let name = req.query.name;
+app.post("/create-clan", (req, res) => {
+    let {name, desc, unique_id, public} = req.body;
+    let token = getToken(req.cookies);
+
     if (name === "" || name === null) {
-        return res.sendStatus(400);
+        return res.sendStatus(405);
     }
 
-    let desc = req.query.desc;
     if (desc.length > 100) {
-        return res.sendStatus(400);
+        return res.sendStatus(404);
     }
 
-    let unique_id = req.query.unique_id;
     if (unique_id.length !== 7) {
-        return res.sendStatus(400);
+        return res.sendStatus(403);
     }
 
-    let public = req.query.public;
-    if (public !== "true" && public !== "false") {
-        return res.sendStatus(400);
+    if (public !== true && public !== false) {
+        return res.sendStatus(402);
     }
 
-    let userid = [""];
+    if (token === undefined || tokens[token] === undefined) {
+        return res.sendStatus(401);
+    }
+
+    let userid = tokens[token];
+
+
+    pool.query(`UPDATE users
+        SET clans = ARRAY_APPEND(clans, $1) 
+        WHERE steamid = $2;`,
+        [unique_id,userid]
+    );
+
     pool.query(
         `INSERT INTO clans(clan_name, clan_description, clan_chat, member_ids, unique_id, public) 
         VALUES($1, $2, $3, $4, $5, $6)
         RETURNING *`,
-        [name, desc, {}, userid, unique_id, public]
+        [name, desc, {}, [userid], unique_id, public]
     );
-    console.log("Created Clan");
     res.sendStatus(200);
+});
+
+app.post("/join-clan", (req, res) => {
+    let {unique_id} = req.body;
+    let token = getToken(req.cookies);
+
+    if (token === undefined || tokens[token] === undefined) {
+        res.status(400);
+        return res.send("Must login first");
+    }
+
+    let user_id = tokens[token];
+
+    pool.query(`SELECT * FROM clans WHERE unique_id = $1`,
+    [unique_id]
+    ).then((result) => {
+        if (result.rows.length == 0 ) {
+            res.status(400);
+            return res.send("Unique ID is not valid");
+        }
+        if (result.rows[0]["member_ids"].includes(user_id)) {
+            console.log(result.rows[0]["member_ids"]);
+            res.status(400);
+            return res.send("Already A Member");
+        }
+
+        pool.query(`UPDATE clans
+            SET member_ids = ARRAY_APPEND(member_ids, $1) 
+            WHERE unique_id = $2;`,
+            [user_id, unique_id]
+        );
+
+        pool.query(`UPDATE users
+            SET clans = ARRAY_APPEND(clans, $1) 
+            WHERE steamid = $2;`,
+            [unique_id,user_id]
+        );
+
+        return res.sendStatus(200);
+    });
 });
 
 app.get("/user_clan", (req, res) => {
