@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Login</title>
+</head>
+
+<body>
+    <input type="text" id = "id" placeholder="Enter steamid (TEMPORARY)">
+    <button id = "submit" onclick="onSubmit()"> Submit (TEMPORARY) </button>
+
+    <input type="text" id = "unique" placeholder="Enter uniqueid (TEMPORARY)">
+    <button id = "submit" onclick="temp()"> Join Clan (TEMPORARY) </button>
+	
+	<a href="./openId.php">
+	<img alt="Sign in through Steam" src="steam_login.png">
+	</a>
+
+    <script>
+        function onSubmit() {
+            let val = document.getElementById("id").value;
+            loginInfo = JSON.stringify({"id": val});
+            fetch("/login-page", {method: "POST", headers: {"Content-Type": "application/json"}, body: loginInfo}
+            ).then((response) => {
+                respCode = response.status;
+                console.log(respCode);
+            });
+        }
+
+
+
+        function temp() {
+            let id = document.getElementById("unique").value;
+            let info = JSON.stringify({"unique_id" : id});
+            fetch("/join-clan", {method: "POST", headers: {"Content-Type": "application/json"}, body: info}
+            ).then((response) => {
+                respCode = response.status;
+                return response.text();
+            }).then((body) => {
+                if (respCode != 200) {
+                    console.log(body);
+                }
+            });
+        }
+    </script>
+
+</body>
