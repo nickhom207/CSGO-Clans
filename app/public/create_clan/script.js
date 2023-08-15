@@ -2,15 +2,13 @@ let submit = document.getElementById("submit");
 let message = document.getElementById("works");
 
 submit.onclick = function () {
-    console.log("made it");
 
     let name = document.getElementById("clan_name").value;
     let desc = document.getElementById("clan_desc").value;
-    // let public = document.querySelector('input[name="public"]:checked');
-    // var publicVal = public ? public.value : "";
     let public = document.getElementById("public").checked;
-    console.log(public);
-    fetch(`/create-clan?name=${name}&desc=${desc}&unique_id=${createRandomCode()}&public=${public}`
+    
+    let clanInfo = JSON.stringify({"name" : name, "desc" : desc, "unique_id" : createRandomCode(), "public" : public});
+    fetch("/create-clan", {method: "POST", headers: {"Content-Type": "application/json"}, body: clanInfo}
     ).then((response) => {
         respCode = response.status;
 
