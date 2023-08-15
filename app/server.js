@@ -133,8 +133,8 @@ app.post("/join-clan", (req, res) => {
     });
 });
 
-app.get("/user_clan", (req, res) => {
-    if(req.query.userID) {
+app.get("/user-clan", (req, res) => {
+    if(req.query.steamID) {
         res.status(200);
         pool.query(
             `SELECT * FROM users WHERE steamid = $1`,
