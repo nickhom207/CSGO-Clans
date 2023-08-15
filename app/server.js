@@ -71,38 +71,48 @@ app.get("/create-clan", (req, res) => {
     res.sendStatus(200);
 });
 
-app.get("/user_clan", (req, res) => {
-    if(req.query.userID) {
-        res.status(200);
+app.get("/user-clan", (req, res) => {
+    if(req.query.steamID) {
+        // res.status(200);
         pool.query(
-            `SELECT * FROM users WHERE id = $1`,
-            [req.query.userID]
+            `SELECT * FROM users WHERE steamid = $1`,
+            [req.query.steamID]
         ).then((result) => {
             // row was successfully inserted into table
-            res.json({"rows": result.rows});
-            console.log("Inserted:");
-            console.log(result.rows);
-        }
-        )
+            return res.json({"rows": result.rows});
+        })
+        .catch((error) => {
+            // something went wrong when inserting the row
+            res.status(500);
+            return res.json({"error": "The user has not joined a clan yet."});
+        });
+    }
+    else{
+        res.status(400);
+        return res.json({"error": "Invalid steamID"});
+    }
+});
+
+app.get("/user-clan-detail", (req, res) => {
+    if(req.query.clanID) {
+        res.status(200);
+        pool.query(
+            `SELECT clan_name FROM clans WHERE unique_id = $1`,
+            [req.query.clanID]
+        ).then((result) => {
+            // row was successfully inserted into table
+            return res.json({"rows": result.rows});
+        })
         .catch((error) => {
             // something went wrong when inserting the row
             res.sendStatus(500);
-            res.json({"error": "Invalid species"});
-            console.log(error);
+            return res.json({"error": "Unknown error occurred."});
         });
     }
-    // else{
-    //     res.status(200);
-    //     pool.query(
-    //         `SELECT * FROM books`
-    //     ).then((result) => {
-    //         // row was successfully inserted into table
-    //         res.json({"rows": result.rows});
-    //         console.log("Inserted:");
-    //         console.log(result.rows);
-    //     })
-        
-    // }
+    else{
+        res.status(400);
+        return res.json({"error": "Invalid clanID"});
+    }
 });
 
 app.listen(port, hostname, () => {
