@@ -3,6 +3,12 @@ const express = require("express");
 let axios = require("axios");
 const app = express();
 
+const path = require("path");
+const http = require("http");
+const sever = http.createServer(app);
+const socketio = require("socket.io");
+const io = socketio(sever);
+
 const port = 3000;
 const hostname = "localhost";
 
@@ -131,6 +137,12 @@ app.post("/join-clan", (req, res) => {
 
         return res.sendStatus(200);
     });
+});
+
+
+io.on("connection", socket => {
+    console.log("New WS Connection...");
+    socket.emit("message", "Test");
 });
 
 app.get("/user-clan", (req, res) => {

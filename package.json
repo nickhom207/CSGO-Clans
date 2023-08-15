@@ -14,6 +14,11 @@
     "cookie-parser": "^1.4.6",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+<<<<<<< HEAD
+    "pg": "^8.11.2",
+    "socket.io": "^4.7.2"
+=======
     "pg": "^8.11.2"
+>>>>>>> 0dbb474b8ae96c19b4781dd69af59cd6df49c8d1
   }
 }
