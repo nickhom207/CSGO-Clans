@@ -3,7 +3,6 @@ let steamID = "76561198025039301";
 var table = document.getElementById("clans");
 
 
-console.log("HIIIII");
 fetch(`/user-clan?steamID=${steamID}`).then((response) => {
     return response.json();
 })
