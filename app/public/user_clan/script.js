@@ -54,7 +54,7 @@ fetch(`/user-clan?steamID=${steamID}`).then((response) => {
 
 function clanInfoFun(clanName){
     console.log(clanName);
-    window.location.href = `/clan-info?clanName=${clanName}`;
+    window.location.href = `/clan_pages?clanName=${clanName}`;
 
     // fetch(`/clan-info?clanName=${clanName}`).then((response) => {
     //     return response.json();
