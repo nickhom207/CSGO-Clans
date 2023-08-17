@@ -2,7 +2,7 @@
 let steamID = "76561198025039301";
 
 let userID = "1000";
-var table = document.getElementById("clans");
+// var table = document.getElementById("clans");
 var clanList = document.getElementById("clanList");
 
 
@@ -15,13 +15,12 @@ fetch(`/user-info?steamID=${steamID}`).then((response) => {
         return;
     }
     // get the count of rows of the table with id="train-table"
-    let rowCount = document.getElementById('clans').rows.length;
-    
-    for (let x=rowCount; x>0; x--) {
-        document.getElementsByTagName("tr")[x].remove();
-    }
+    // let rowCount = document.getElementById('clans').rows.length;
 
-    document.getElementById("welcomeUser").textContent = "Welcome   to your clan!";  
+    document.getElementById("welcomeUser").textContent = "Welcome " + body.rows[0].username + " to your Profile!"; 
+    document.getElementById("userName").innerHTML = "<b>User Name</b>: " + body.rows[0].username; 
+    document.getElementById("steamId").innerHTML = "<b>Steam ID</b>: " + steamID;
+    document.getElementById("region").innerHTML = "<b>Region</b>: " + body.rows[0].region;
 
     // body.rows[0].username
     console.log(body.rows[0].clans);
@@ -32,21 +31,12 @@ fetch(`/user-info?steamID=${steamID}`).then((response) => {
             return response.json();
         })
         .then((body) => {
-            // console.log(body.rows);
-            var row = document.createElement("tr");
-            var cell1 = document.createElement("td");
-            cell1.textContent = body.rows[0].clan_name;
-            row.appendChild(cell1);
-
-            table.appendChild(row);
-
             let button = document.createElement("button");
             button.textContent = body.rows[0].clan_name;
             button.onclick = function(){clanInfoFun(button.textContent)}
             clanList.appendChild(button);
 
         });
-
     }
 });
 
