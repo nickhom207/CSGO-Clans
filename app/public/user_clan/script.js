@@ -28,7 +28,7 @@ fetch(`/user-clan?steamID=${steamID}`).then((response) => {
 
     // display data
     for(let i = 0; i < body.rows[0].clans.length; i++){
-        fetch(`/user-clan-detail?clanID=${body.rows[0].clans[i]}`).then((response) => {
+        fetch(`/user-clan-name-detail?clanID=${body.rows[0].clans[i]}`).then((response) => {
             return response.json();
         })
         .then((body) => {
@@ -51,16 +51,7 @@ fetch(`/user-clan?steamID=${steamID}`).then((response) => {
 });
 
 
-
 function clanInfoFun(clanName){
     console.log(clanName);
     window.location.href = `/clan_pages?clanName=${clanName}`;
-
-    // fetch(`/clan-info?clanName=${clanName}`).then((response) => {
-    //     return response.json();
-    // })
-    // .then((body) => {
-    //     console.log(body.rows);
-
-    // });
 }

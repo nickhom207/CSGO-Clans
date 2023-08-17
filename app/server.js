@@ -167,7 +167,7 @@ app.get("/user-clan", (req, res) => {
     }
 });
 
-app.get("/user-clan-detail", (req, res) => {
+app.get("/user-clan-name-detail", (req, res) => {
     if(req.query.clanID) {
         res.status(200);
         pool.query(
