@@ -26,3 +26,11 @@ th, td {
 #message {
 	margin: 1rem 0;
 }
+
+.scrollabletextbox {
+    height:250px;
+    width:500px;
+    font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 82%;
+    overflow:scroll;
+}

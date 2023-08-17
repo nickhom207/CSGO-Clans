@@ -145,7 +145,7 @@ io.on("connection", socket => {
     socket.emit("message", "Test");
 });
 
-app.get("/user-clan", (req, res) => {
+app.get("/user-info", (req, res) => {
     if(req.query.steamID) {
         res.status(200);
         pool.query(
@@ -208,6 +208,28 @@ app.get("/clan-info", (req, res) => {
     else{
         res.status(400);
         return res.json({"error": "Invalid clanName"});
+    }
+});
+
+app.get("/user-name-info", (req, res) => {
+    if(req.query.steamID) {
+        res.status(200);
+        pool.query(
+            `SELECT username FROM users WHERE steamid = $1`,
+            [req.query.steamID]
+        ).then((result) => {
+            // row was successfully inserted into table
+            return res.json({"rows": result.rows});
+        })
+        .catch((error) => {
+            // something went wrong when inserting the row
+            res.status(500);
+            return res.json({"error": "The user has not joined a clan yet."});
+        });
+    }
+    else{
+        res.status(400);
+        return res.json({"error": "Invalid steamID"});
     }
 });
 
