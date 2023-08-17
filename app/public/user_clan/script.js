@@ -6,7 +6,7 @@ var table = document.getElementById("clans");
 var clanList = document.getElementById("clanList");
 
 
-fetch(`/user-clan?steamID=${steamID}`).then((response) => {
+fetch(`/user-info?steamID=${steamID}`).then((response) => {
     return response.json();
 })
 .then((body) => {
