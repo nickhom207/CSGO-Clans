@@ -16,13 +16,27 @@ const hostname = "localhost";
 app.set("socketio", io);
 app.set('view engine', 'ejs');
 
-
-app.use(express.static("public"));
-
 const env = require("../env.json");
 
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+
+app.use(express.text());
+app.use(express.json());
+app.use(cookieParser());
+
+app.use(session({
+    secret: "key",
+    resave: false,
+    saveUninitialized: false,
+	cookie: {
+		maxAge: 3600000
+	}
+}));
+
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 let apiKey = env["api_key"];
 let baseUrl = env["api_url"];
@@ -35,20 +49,7 @@ pool.connect().then(function () {
 
 app.use(express.static("public"));
 
-app.use(express.text());
-app.use(express.json());
-app.use(cookieParser());
-
 let tokens = {};
-
-app.use(session({
-    secret: "key",
-    resave: false,
-    saveUninitialized: false,
-	cookie: {
-		maxAge: 3600000
-	}
-}));
 
 function getToken(obj) {
     return obj["connect.sid"].substring(2).split(".")[0];
@@ -56,12 +57,15 @@ function getToken(obj) {
 
 app.post("/login-page", (req, res) => {
     let steamid = req.body.id;
-    req.session.isAuth = true;  //TODO: Delete this once login system is finished
-    if (tokens[req.session.id] === undefined) {
-        tokens[req.session.id] = steamid;
-    }
-    console.log(tokens);
-    res.sendStatus(200);
+    req.login(steamid, function(err){
+        if (tokens[req.session.id] === undefined) {
+            tokens[req.session.id] = steamid;
+        }
+        console.log(tokens);
+        
+        if(err) return next(err);
+        return res.redirect('/home');
+    });
 });
 
 
@@ -70,23 +74,23 @@ app.post("/create-clan", (req, res) => {
     let token = getToken(req.cookies);
 
     if (name === "" || name === null) {
-        return res.sendStatus(405);
+        return res.sendStatus(400);
     }
 
     if (desc.length > 100) {
-        return res.sendStatus(404);
+        return res.sendStatus(400);
     }
 
     if (unique_id.length !== 7) {
-        return res.sendStatus(403);
+        return res.sendStatus(400);
     }
 
     if (public !== true && public !== false) {
-        return res.sendStatus(402);
+        return res.sendStatus(400);
     }
 
     if (token === undefined || tokens[token] === undefined) {
-        return res.sendStatus(401);
+        return res.sendStatus(400);
     }
 
     let userid = tokens[token];
@@ -191,7 +195,31 @@ app.get("/user-clan-detail", (req, res) => {
     }
 });
 
-app.get("/test", (req, res) => {
+app.get("/user-name-info", (req, res) => {
+    if(req.query.steamID) {
+        res.status(200);
+        pool.query(
+            `SELECT username FROM users WHERE steamid = $1`,
+            [req.query.steamID]
+        ).then((result) => {
+            // row was successfully inserted into table
+            return res.json({"rows": result.rows});
+        })
+        .catch((error) => {
+            // something went wrong when inserting the row
+            res.status(500);
+            return res.json({"error": "The user has not joined a clan yet."});
+        });
+    }
+    else{
+        res.status(400);
+        return res.json({"error": "Invalid steamID"});
+    }
+});
+
+
+
+app.get("/test", ensureAuthenticated, (req, res) => {
     let clan_id = req.query["clan_id"];
     if (req.session.id == null) {
         return res.sendStatus(400);
@@ -207,7 +235,7 @@ app.get("/test", (req, res) => {
             return res.sendStatus(400);
         }
         
-        if (clan_id !== null && clan_id !== "" && clan_id.length === 7 && req.session.isAuth) {
+        if (clan_id !== null && clan_id !== "" && clan_id.length === 7) {
             pool.query(
                 `SELECT username FROM users WHERE steamid = $1`,
                 [tokens[token]]
@@ -261,15 +289,15 @@ passport.use(new SteamStrategy({
 	}
 ));
 
-app.use(passport.initialize());
-
-app.use(passport.session());
-
 app.get('/user', (req, res) => {
 	res.send(req.user);
 });
 
 app.get("/logout", (req, res) => {
+    console.log(tokens[req.session.id]);
+    if (tokens[req.session.id] != null) {
+        delete tokens[req.session.id];
+    }
   req.logout(req.user, err => {
     if(err) return next(err);
     res.redirect("/login");
@@ -281,7 +309,11 @@ app.get('/api/auth/steam', passport.authenticate('steam', {failureRedirect: '/lo
 });
 
 app.get('/api/auth/steam/return', passport.authenticate('steam', {failureRedirect: '/login'}), function (req, res) {
-	res.redirect('/dashboard')
+    if (tokens[req.session.id] === undefined) {
+        tokens[req.session.id] = req.user.id;
+    }
+    console.log(tokens);
+    res.redirect('/dashboard');
 });
 
 function ensureAuthenticated(req, res, next) {
