@@ -2,15 +2,19 @@ const pg = require("pg");
 const express = require("express");
 let axios = require("axios");
 const app = express();
-
-const path = require("path");
 const http = require("http");
-const sever = http.createServer(app);
+const server = http.createServer(app);
+// const { Server } = require("socket.io")
+// const io = new Server(server);
 const socketio = require("socket.io");
-const io = socketio(sever);
+const io = socketio(server);
 
 const port = 3000;
 const hostname = "localhost";
+
+app.set("socketio", io);
+app.set('view engine', 'ejs');
+
 
 app.use(express.static("public"));
 
@@ -139,12 +143,6 @@ app.post("/join-clan", (req, res) => {
     });
 });
 
-
-io.on("connection", socket => {
-    console.log("New WS Connection...");
-    socket.emit("message", "Test");
-});
-
 app.get("/user-clan", (req, res) => {
     if(req.query.steamID) {
         res.status(200);
@@ -189,6 +187,54 @@ app.get("/user-clan-detail", (req, res) => {
     }
 });
 
-app.listen(port, hostname, () => {
+app.get("/test", (req, res) => {
+    let clan_id = req.query["clan_id"];
+    if (req.session.id == null) {
+        return res.sendStatus(400);
+    }
+    let token = req.session.id;
+    let username = "";
+    
+    pool.query(
+        `SELECT * FROM clans WHERE unique_id = $1`,
+        [clan_id]
+    ).then((result) => {
+        if (result.rows.length == 0) {
+            return res.sendStatus(400);
+        }
+        
+        if (clan_id !== null && clan_id !== "" && clan_id.length === 7 && req.session.isAuth) {
+            pool.query(
+                `SELECT username FROM users WHERE steamid = $1`,
+                [tokens[token]]
+            ).then((result) => {
+                if (result.rows.length > 0) {
+                    username = result.rows[0].username;
+                    return res.render("pages/chat.ejs", {"clanid": clan_id, "user" : username});
+                }
+                else {
+                    return res.sendStatus(500);
+                }
+            });
+        }
+        else {
+            return res.sendStatus(404);
+        }
+    });
+});
+
+io.on("connection", (socket) => {
+    console.log("connected");
+    socket.emit("message", "test");
+    socket.on("join", function(clan_id) {
+        socket.join(clan_id);
+    });
+    socket.on("sendMessage", function(msg) {
+        console.log(msg);
+        socket.broadcast.to(msg.clan_id).emit("recieveMessage", {"message" : msg.message, "user" : msg.user, "clan_id" : msg.clan_id});
+    });
+});
+
+server.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
