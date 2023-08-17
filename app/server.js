@@ -1,6 +1,9 @@
 const pg = require("pg");
 const express = require("express");
 let axios = require("axios");
+const passport = require('passport');
+const passportSteam = require('passport-steam');
+const SteamStrategy = passportSteam.Strategy;
 const app = express();
 
 const port = 3000;
@@ -33,7 +36,10 @@ let tokens = {};
 app.use(session({
     secret: "key",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+	cookie: {
+		maxAge: 3600000
+	}
 }));
 
 function getToken(obj) {
@@ -176,6 +182,56 @@ app.get("/user-clan-detail", (req, res) => {
         return res.json({"error": "Invalid clanID"});
     }
 });
+
+//Steam openID authorization
+
+passport.serializeUser(function(user, done) {
+	done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+	done(null, user);
+});
+
+passport.use(new SteamStrategy({
+	returnURL: 'http://localhost:' + port + '/api/auth/steam/return',
+	realm: 'http://localhost:' + port + '/',
+	apiKey: apiKey
+	}, function (identifier, profile, done) {
+		process.nextTick(function () {
+			profile.identifier = identifier;
+			return done(null, profile);
+		});
+	}
+));
+
+app.use(passport.initialize());
+
+app.use(passport.session());
+
+app.get('/user', (req, res) => {
+	res.send(req.user);
+});
+
+app.get("/logout", (req, res) => {
+  req.logout(req.user, err => {
+    if(err) return next(err);
+    res.redirect("/login");
+  });
+});
+
+app.get('/api/auth/steam', passport.authenticate('steam', {failureRedirect: '/login'}), function (req, res) {
+	res.redirect('/dashboard')
+});
+
+app.get('/api/auth/steam/return', passport.authenticate('steam', {failureRedirect: '/login'}), function (req, res) {
+	res.redirect('/dashboard')
+});
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login');
+}
 
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
