@@ -1,22 +1,22 @@
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const clanName = urlParams.get('clanName');
-console.log(clanName);
 
 fetch(`/clan-info?clanName=${clanName}`).then((response) => {
     return response.json();
 })
 .then((body) => {
-    const clanNameElement = document.getElementById('clanName');
-    clanNameElement.textContent = "CLAN: " + clanName;
+    document.getElementById('clan').textContent = "Welcome to " + clanName + " page!";
+    document.getElementById('clanName').innerHTML = "<b>Clan Name: </b>: " + clanName;
+    document.getElementById('clanId').innerHTML = "<b>Clan ID: </b>: " + body.rows[0].unique_id;
+    document.getElementById('clanDescription').innerHTML = "<b>Clan Description: </b>: " + body.rows[0].clan_description;
     const ifPublicElement = document.getElementById('ifPublic');
     if(body.rows[0].public){
-        ifPublicElement.textContent = "This clan is public!";
+        document.getElementById('ifPublic').innerHTML = "<b>Clan Status: </b>: Public";
     }else{
-        ifPublicElement.textContent = "This clan is private!";
+        document.getElementById('ifPublic').innerHTML = "<b>Clan Status: </b>: Private";
     }
-    const clanDescriptionElement = document.getElementById('clanDescription');
-    clanDescriptionElement.textContent = "CLAN DESCRIPTION: " + body.rows[0].clan_description;
+
     const clanMembersElement = document.getElementById('clanMembers');
     for(let i = 0; i < body.rows[0].member_ids.length; i++){
         fetch(`/user-name-info?steamID=${body.rows[0].member_ids[i]}`).then((response) => {
@@ -31,12 +31,12 @@ fetch(`/clan-info?clanName=${clanName}`).then((response) => {
         });
     }
 
-    const clanChatElement = document.getElementById('clanChat');
-    for(let i = 0; i < body.rows[0].chat.length; i++){
-        clanChatElement.textContent += body.rows[0].chat[i] + "\n";
-    }
+    // const clanChatElement = document.getElementById('clanChat');
+    // for(let i = 0; i < body.rows[0].chat.length; i++){
+    //     clanChatElement.textContent += body.rows[0].chat[i] + "\n";
+    // }
 
-    console.log(body.rows);
+    // console.log(body.rows);
 
 
 });
