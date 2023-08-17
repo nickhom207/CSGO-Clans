@@ -16,10 +16,6 @@ fetch(`/user-info?steamID=${steamID}`).then((response) => {
     }
     // get the count of rows of the table with id="train-table"
     // let rowCount = document.getElementById('clans').rows.length;
-    
-    // for (let x=rowCount; x>0; x--) {
-    //     document.getElementsByTagName("tr")[x].remove();
-    // }
 
     document.getElementById("welcomeUser").textContent = "Welcome " + body.rows[0].username + " to your Profile!"; 
     document.getElementById("userName").innerHTML = "<b>User Name</b>: " + body.rows[0].username; 
@@ -35,14 +31,6 @@ fetch(`/user-info?steamID=${steamID}`).then((response) => {
             return response.json();
         })
         .then((body) => {
-            // console.log(body.rows);
-            // var row = document.createElement("tr");
-            // var cell1 = document.createElement("td");
-            // cell1.textContent = body.rows[0].clan_name;
-            // row.appendChild(cell1);
-
-            // table.appendChild(row);
-
             let button = document.createElement("button");
             button.textContent = body.rows[0].clan_name;
             button.onclick = function(){clanInfoFun(button.textContent)}
