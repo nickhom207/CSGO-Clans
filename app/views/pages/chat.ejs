@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Chat</title>
+    <link rel="stylesheet" type="text/css" href="clan_pages/styles.css" />
+</head>
+
+<body>
+    <div id="messages" ></div>
+    <br>
+    <input type="text" id="chat">
+    <button id="submit"> Send </button>
+
+    <script>
+        let clan_id = '<%= clanid  %>';
+        let username = '<%= user  %>';
+        console.log(clan_id);
+    </script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="clan_pages/chat.js"></script>
+</body>
