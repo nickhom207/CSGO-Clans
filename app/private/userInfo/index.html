@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Edit User Information</title>
+</head>
+
+<body>
+	<img id="pfp"></img>
+	<p id="name">text</p>
+	<a id="profile" target="_blank">Steam Profile</a>
+	<a href="/dashboard">Return to dashboard</a>
+	<script defer>
+		fetch("/user").then((response) => {
+			response.json().then(body => {
+				if(!body.hasOwnProperty("id")){
+					console.log("error fetching user data");
+				}
+				else{
+					console.log(body);
+					document.getElementById("name").textContent = body.displayName;
+					document.getElementById("pfp").src = body.photos[2].value;
+					document.getElementById("profile").href = body._json.profileurl;
+				}
+			})
+		});
+	</script>
+</body>

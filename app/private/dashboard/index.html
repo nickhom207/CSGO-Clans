@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard</title>
+</head>
+
+<body>
+	<div class="topnav">
+		<a href="/dashboard">Dashboard</a>
+		<a id="name" href="/userInfo">text</a>
+		<img id="pfp"></img>
+		<a href="/logout">Log out</a>
+	</div>
+	
+	<script defer>
+		fetch("/user").then((response) => {
+			response.json().then(body => {
+				if(!body.hasOwnProperty("id")){
+					console.log("error fetching user data");
+				}
+				else{
+					console.log(body);
+					document.getElementById("name").textContent = body.displayName;
+					document.getElementById("pfp").src = body.photos[0].value;
+				}
+			})
+		});
+	</script>
+</body>

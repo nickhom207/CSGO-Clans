@@ -25,8 +25,6 @@ pool.connect().then(function () {
     console.log(`Connected to database ${env.database}`);
 });
 
-app.use(express.static("public"));
-
 app.use(express.text());
 app.use(express.json());
 app.use(cookieParser());
@@ -215,7 +213,8 @@ app.get('/user', (req, res) => {
 
 app.get("/logout", (req, res) => {
   req.logout(req.user, err => {
-    if(err) return next(err);
+    if(err)
+		return next(err);
     res.redirect("/login");
   });
 });
@@ -232,6 +231,15 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
 }
+
+const path = require('path');
+app.get('/dashboard', ensureAuthenticated, (req, res) => {
+	res.sendFile(path.join(__dirname, '/private/dashboard/index.html'));
+});
+
+app.get('/userInfo', ensureAuthenticated, (req, res) => {
+	res.sendFile(path.join(__dirname, '/private/userInfo/index.html'));
+});
 
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
