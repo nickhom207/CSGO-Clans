@@ -153,7 +153,7 @@ app.post("/join-clan", (req, res) => {
     });
 });
 
-app.get("/user-clan", (req, res) => {
+app.get("/user-info", (req, res) => {
     if(req.query.steamID) {
         res.status(200);
         pool.query(
@@ -175,7 +175,7 @@ app.get("/user-clan", (req, res) => {
     }
 });
 
-app.get("/user-clan-detail", (req, res) => {
+app.get("/user-clan-name-detail", (req, res) => {
     if(req.query.clanID) {
         res.status(200);
         pool.query(
@@ -194,6 +194,28 @@ app.get("/user-clan-detail", (req, res) => {
     else{
         res.status(400);
         return res.json({"error": "Invalid clanID"});
+    }
+});
+
+app.get("/clan-info", (req, res) => {
+    if(req.query.clanName) {
+        res.status(200);
+        pool.query(
+            `SELECT * FROM clans WHERE clan_name = $1`,
+            [req.query.clanName]
+        ).then((result) => {
+            // row was successfully inserted into table
+            return res.json({"rows": result.rows});
+        })
+        .catch((error) => {
+            // something went wrong when inserting the row
+            res.sendStatus(500);
+            return res.json({"error": "Unknown error occurred."});
+        });
+    }
+    else{
+        res.status(400);
+        return res.json({"error": "Invalid clanName"});
     }
 });
 
