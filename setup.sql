@@ -9,7 +9,8 @@ CREATE TABLE users (
 	username text,
 	region text,
     calendar json,
-    clans text[]
+    clans text[],
+	UNIQUE(steamid)
 );
 
 CREATE TABLE clans (

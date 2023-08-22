@@ -338,6 +338,14 @@ app.get('/api/auth/steam/return', passport.authenticate('steam', {failureRedirec
         tokens[req.session.id] = req.user.id;
     }
     console.log(tokens);
+	
+	//insert logged in user into database
+	pool.query(`INSERT INTO users (steamid, username, region, calendar, clans) 
+		VALUES($1, $2, $3, $4, $5)
+		ON CONFLICT(steamid) DO NOTHING`,
+        [req.user.id, req.user.displayName, 'Not set', '{"events":[]}', '{}']
+    );
+	
     res.redirect('/dashboard');
 });
 
@@ -353,6 +361,24 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
 
 app.get('/userInfo', ensureAuthenticated, (req, res) => {
 	res.sendFile(path.join(__dirname, '/private/userInfo/index.html'));
+});
+
+app.post("/edit-user", (req, res) => {
+    let {name, desc, unique_id, public} = req.body;
+    let token = getToken(req.cookies);
+
+    if (token === undefined || tokens[token] === undefined) {
+        return res.sendStatus(400);
+    }
+
+    let userid = tokens[token];
+
+    pool.query(`UPDATE users
+        SET region = $2 
+        WHERE steamid = $1;`,
+        [userid, req.body.region]
+    );
+    res.sendStatus(200);
 });
 
 server.listen(port, hostname, () => {

@@ -5,10 +5,19 @@
 </head>
 
 <body>
-	<img id="pfp"></img>
-	<p id="name">text</p>
-	<a id="profile" target="_blank">Steam Profile</a>
-	<a href="/dashboard">Return to dashboard</a>
+	<div>
+		<img id="pfp"></img>
+		<p id="name">text</p>
+		<select name="region" id="region">
+		  <option value="Not set">Not set</option>
+		  <option value="USeast">US East</option>
+		  <option value="UScentral">US Central</option>
+		  <option value="USwest">US West</option>
+		</select>
+		<a id="profile" target="_blank">Steam Profile</a>
+		<a href="/dashboard">Return to dashboard</a>
+		<button id="save">Save updates</button>
+	</div>
 	<script defer>
 		fetch("/user").then((response) => {
 			response.json().then(body => {
@@ -22,6 +31,19 @@
 					document.getElementById("profile").href = body._json.profileurl;
 				}
 			})
+		});
+		
+		let regionInput = document.getElementById("region");
+		let button = document.getElementById("save");
+		button.addEventListener("click", () => {
+			let region = regionInput.value;
+			let data = JSON.stringify({region});
+			fetch("/edit-user", {method: "POST", headers: {"Content-Type": "application/json"}, body: data}).then(function (response) {
+				console.log(response.status);
+				return response.json;
+			}).catch(function (error) {
+					console.log(error);
+			});
 		});
 	</script>
 </body>
