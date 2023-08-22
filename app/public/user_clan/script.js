@@ -1,7 +1,3 @@
-
-let steamID = "76561198025039301";
-
-let userID = "1000";
 // var table = document.getElementById("clans");
 var clanList = document.getElementById("clanList");
 
@@ -24,16 +20,17 @@ fetch(`/user-info?steamID=${steamID}`).then((response) => {
 
     // body.rows[0].username
     console.log(body.rows[0].clans);
+    let clans = body.rows[0].clans;
 
     // display data
-    for(let i = 0; i < body.rows[0].clans.length; i++){
+    for(let i = 0; i < clans.length; i++){
         fetch(`/user-clan-name-detail?clanID=${body.rows[0].clans[i]}`).then((response) => {
             return response.json();
         })
         .then((body) => {
             let button = document.createElement("button");
             button.textContent = body.rows[0].clan_name;
-            button.onclick = function(){clanInfoFun(button.textContent)}
+            button.onclick = function(){clanInfoFun(clans[i])};
             clanList.appendChild(button);
 
         });
@@ -42,6 +39,5 @@ fetch(`/user-info?steamID=${steamID}`).then((response) => {
 
 
 function clanInfoFun(clanName){
-    console.log(clanName);
-    window.location.href = `/clan_pages?clanName=${clanName}`;
+    window.location.href = `/clan-pages?unique_id=${clanName}`;
 }

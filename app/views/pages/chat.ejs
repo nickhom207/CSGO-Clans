@@ -6,6 +6,23 @@
 </head>
 
 <body>
+    <h1 id="clan"></h1>
+    <p id="clanName"> </p>
+    <p id="clanId"> </p>
+    <p id="clanDescription"> </p>
+    <p id="ifPublic"> </p>
+
+
+    <table>
+        <thead>
+            <tr><th>Clan Members</th></tr>
+        </thead>
+        <tbody id="clanMembers"></tbody>
+    </table>
+
+    <br>
+    <br>
+
     <div id="messages" ></div>
     <br>
     <input type="text" id="chat">
@@ -14,9 +31,8 @@
     <script>
         let clan_id = '<%= clanid  %>';
         let username = '<%= user  %>';
-        console.log(clan_id);
     </script>
-
+    <script src="/clan_pages/script.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="clan_pages/chat.js"></script>
 </body>
