@@ -387,6 +387,22 @@ app.get('/userInfo', ensureAuthenticated, (req, res) => {
 	res.sendFile(path.join(__dirname, '/private/userInfo/index.html'));
 });
 
+app.get("/internal-user-info", (req, res) => {
+	let token = getToken(req.cookies);
+	let userid = tokens[token];
+	res.status(200);
+	pool.query(
+		`SELECT * FROM users WHERE steamid = $1`,
+		[userid]
+	).then((result) => {
+		res.send(result.rows);
+	})
+	.catch((error) => {
+		res.status(500);
+		return res.json({"error": "Error"});
+	});
+});
+
 app.post("/edit-user", (req, res) => {
     let {name, desc, unique_id, public} = req.body;
     let token = getToken(req.cookies);
