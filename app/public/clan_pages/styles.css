@@ -31,3 +31,40 @@
     margin-top:0px;
     font-size: 1em;
 }
+
+body {
+	margin: 2rem;
+}
+
+#members, #playNow table {
+	border-collapse: collapse;
+}
+
+#members th, td {
+	border: 1px solid black;
+	padding: 10px;
+}
+
+.form {
+	padding: 1rem;
+	margin: 2rem 0;
+	border: 1px solid black;
+}
+.form label {
+	font-weight: bold;
+}
+.form div {
+	margin: 1rem 0;
+}
+
+#message {
+	margin: 1rem 0;
+}
+
+.scrollabletextbox {
+    height:250px;
+    width:500px;
+    font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 82%;
+    overflow:scroll;
+}

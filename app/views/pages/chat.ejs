@@ -7,13 +7,28 @@
 
 <body>
     <h1 id="clan"></h1>
+    <div id="playNow">
+        <table>
+            <tr>
+                <td id="1"> P1 </td>
+                <td id="2"> P2 </td>
+                <td id="3"> P3 </td>
+                <td id="4"> P4 </td>
+                <td id="5"> P5 </td>
+            </tr>
+        </table>
+        <button id="play"> Play Now? </button>
+        <div id="players">
+
+        </div>
+    </div>
     <p id="clanName"> </p>
     <p id="clanId"> </p>
     <p id="clanDescription"> </p>
     <p id="ifPublic"> </p>
 
 
-    <table>
+    <table id = "members">
         <thead>
             <tr><th>Clan Members</th></tr>
         </thead>
@@ -35,4 +50,5 @@
     <script src="/clan_pages/script.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="clan_pages/chat.js"></script>
+    <script src="clan_pages/play.js"></script>
 </body>

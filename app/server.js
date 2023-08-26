@@ -261,11 +261,53 @@ app.get("/user-clan", ensureAuthenticated, (req, res) => {
     return res.render("pages/userClan.ejs", {"steamid": steamid});
 });
 
+let playNow = {};
+let timeOutIds = {};
 
+app.post("/play-now", ensureAuthenticated, (req, res) => {
+    let {unique_id} = req.body;
+    if (req.session.id == null) {
+        return;
+    }
+    let token = req.session.id;
+    let username = "";
+    if (unique_id === null | unique_id === undefined) {
+        return;
+    }
+
+    if (unique_id !== null && unique_id !== "" && unique_id.length === 7) {
+        pool.query(
+            `SELECT username FROM users WHERE steamid = $1`,
+            [tokens[token]]
+        ).then((result) => {
+            if (result.rows.length > 0) {
+                username = result.rows[0].username;
+                if (!playNow[unique_id]) {
+                    let timerid = setTimeout(() => {
+                        io.in(timeOutIds[timerid]).emit("play-cancel", playNow[unique_id]["players"].length);
+                        delete playNow[unique_id];
+                        delete timeOutIds[timerid];
+                    },30000);
+                    timeOutIds[timerid] = unique_id;
+                    let entry = {"players" : [username]};
+                    playNow[unique_id] = entry;
+                }
+                else {
+                    if (!playNow[unique_id]["players"].includes(username)) {
+                        playNow[unique_id]["players"].push(username)
+                    }
+                }
+                io.in(unique_id).emit("play-now", playNow[unique_id]);
+                if (playNow[unique_id]["players"].length == 5) {
+                    io.in(unique_id).emit("players-found", playNow[unique_id]);
+                }
+            }
+        });
+    }
+});
 
 app.get("/clan-pages", ensureAuthenticated, (req, res) => {
     let unique_id = req.query["unique_id"];
-    console.log(unique_id);
     if (req.session.id == null) {
         return res.sendStatus(400);
     }
