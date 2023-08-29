@@ -7,7 +7,8 @@
 <body>
 	<div>
 		<img id="pfp"></img>
-		<p id="name">text</p>
+		<p id="name">name here</p>
+		<p id="steamid">steamid here</p>
 		<select name="region" id="region">
 		  <option value="Not set">Not set</option>
 		  <option value="USeast">US East</option>
@@ -19,6 +20,7 @@
 		<button id="save">Save updates</button>
 	</div>
 	<script defer>
+		let userid;
 		fetch("/user").then((response) => {
 			response.json().then(body => {
 				if(!body.hasOwnProperty("id")){
@@ -27,8 +29,14 @@
 				else{
 					console.log(body);
 					document.getElementById("name").textContent = body.displayName;
+					document.getElementById("steamid").textContent = "Steam ID: " + body.id;
 					document.getElementById("pfp").src = body.photos[2].value;
 					document.getElementById("profile").href = body._json.profileurl;
+					fetch("/internal-user-info?id=" + body.id).then((response) => {
+						response.json().then(body => {
+							document.getElementById("region").value = body.result[0].region;
+						})
+					});
 				}
 			})
 		});
@@ -42,7 +50,7 @@
 				console.log(response.status);
 				return response.json;
 			}).catch(function (error) {
-					console.log(error);
+				console.log(error);
 			});
 		});
 	</script>

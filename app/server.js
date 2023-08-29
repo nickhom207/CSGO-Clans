@@ -381,6 +381,21 @@ app.post("/edit-user", (req, res) => {
     res.sendStatus(200);
 });
 
+app.get("/internal-user-info", (req, res) => {
+    let userid = req.query.id;
+	
+    pool.query(
+		`SELECT * FROM users WHERE steamid = $1`,
+		[userid]
+	).then((result) => {
+		return res.json({result: result.rows});
+	})
+	.catch((error) => {
+		res.sendStatus(500);
+		return res.json({"error": "Error finding user"});
+	});
+});
+
 server.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
 });
