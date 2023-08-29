@@ -66,7 +66,7 @@ app.post("/login-page", (req, res) => {
         console.log(tokens);
         
         if(err) return next(err);
-        return res.redirect('/home');
+        return res.sendStatus(200);
     });
 });
 
@@ -198,11 +198,14 @@ app.get("/user-clan-name-detail", (req, res) => {
 });
 
 app.get("/clan-info", (req, res) => {
-    if(req.query.clanName) {
+    if (!req.query.unique_id) {
+        return res.sendStatus(400);
+    }
+    if(req.query.unique_id) {
         res.status(200);
         pool.query(
-            `SELECT * FROM clans WHERE clan_name = $1`,
-            [req.query.clanName]
+            `SELECT * FROM clans WHERE unique_id = $1`,
+            [req.query.unique_id]
         ).then((result) => {
             // row was successfully inserted into table
             return res.json({"rows": result.rows});
@@ -219,7 +222,26 @@ app.get("/clan-info", (req, res) => {
     }
 });
 
+app.get("/all-public-clan-info", (req, res) => {
+    res.status(200);
+    pool.query(
+        `SELECT * FROM clans where public = true`
+    ).then((result) => {
+        // row was successfully inserted into table
+        return res.json({"rows": result.rows});
+    })
+    .catch((error) => {
+        // something went wrong when inserting the row
+        res.sendStatus(500);
+        return res.json({"error": "Unknown error occurred."});
+    });
+});
+
 app.get("/user-name-info", (req, res) => {
+    if (!req.query.steamID) {
+        return res.sendStatus(400);
+    }
+
     if(req.query.steamID) {
         res.status(200);
         pool.query(
@@ -241,32 +263,91 @@ app.get("/user-name-info", (req, res) => {
     }
 });
 
+app.get("/user-clan", ensureAuthenticated, (req, res) => {
+    if (!req.session.id) {
+        return res.sendStatus(400);
+    }
+    let token = req.session.id;
+    if (!tokens[token]) {
+        return res.sendStatus(400);
+    }
 
+    let steamid = tokens[token];
+    return res.render("pages/userClan.ejs", {"steamid": steamid});
+});
 
-app.get("/test", ensureAuthenticated, (req, res) => {
-    let clan_id = req.query["clan_id"];
+let playNow = {};
+let timeOutIds = {};
+
+app.post("/play-now", ensureAuthenticated, (req, res) => {
+    let {unique_id} = req.body;
+    if (req.session.id == null) {
+        return;
+    }
+    let token = req.session.id;
+    let username = "";
+    if (unique_id === null | unique_id === undefined) {
+        return;
+    }
+
+    if (unique_id !== null && unique_id !== "" && unique_id.length === 7) {
+        pool.query(
+            `SELECT username FROM users WHERE steamid = $1`,
+            [tokens[token]]
+        ).then((result) => {
+            if (result.rows.length > 0) {
+                username = result.rows[0].username;
+                if (!playNow[unique_id]) {
+                    let timerid = setTimeout(() => {
+                        io.in(timeOutIds[timerid]).emit("play-cancel", playNow[unique_id]["players"].length);
+                        delete playNow[unique_id];
+                        delete timeOutIds[timerid];
+                    },30000);
+                    timeOutIds[timerid] = unique_id;
+                    let entry = {"players" : [username]};
+                    playNow[unique_id] = entry;
+                }
+                else {
+                    if (!playNow[unique_id]["players"].includes(username)) {
+                        playNow[unique_id]["players"].push(username)
+                    }
+                }
+                io.in(unique_id).emit("play-now", playNow[unique_id]);
+                if (playNow[unique_id]["players"].length == 5) {
+                    io.in(unique_id).emit("players-found", playNow[unique_id]);
+                }
+            }
+        });
+    }
+});
+
+app.get("/clan-pages", ensureAuthenticated, (req, res) => {
+    let unique_id = req.query["unique_id"];
     if (req.session.id == null) {
         return res.sendStatus(400);
     }
     let token = req.session.id;
     let username = "";
+    if (unique_id === null | unique_id === undefined) {
+        return res.sendStatus(400);
+    }  
     
     pool.query(
         `SELECT * FROM clans WHERE unique_id = $1`,
-        [clan_id]
+        [unique_id]
     ).then((result) => {
         if (result.rows.length == 0) {
             return res.sendStatus(400);
         }
         
-        if (clan_id !== null && clan_id !== "" && clan_id.length === 7) {
+        if (unique_id !== null && unique_id !== "" && unique_id.length === 7) {
             pool.query(
                 `SELECT username FROM users WHERE steamid = $1`,
                 [tokens[token]]
             ).then((result) => {
                 if (result.rows.length > 0) {
                     username = result.rows[0].username;
-                    return res.render("pages/chat.ejs", {"clanid": clan_id, "user" : username});
+                    return res.render("pages/chat.ejs", {"clanid": unique_id, "user" : username});
                 }
                 else {
                     return res.sendStatus(500);
@@ -361,6 +442,22 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
 
 app.get('/userInfo', ensureAuthenticated, (req, res) => {
 	res.sendFile(path.join(__dirname, '/private/userInfo/index.html'));
+});
+
+app.get("/internal-user-info", (req, res) => {
+	let token = getToken(req.cookies);
+	let userid = tokens[token];
+	res.status(200);
+	pool.query(
+		`SELECT * FROM users WHERE steamid = $1`,
+		[userid]
+	).then((result) => {
+		res.send(result.rows);
+	})
+	.catch((error) => {
+		res.status(500);
+		return res.json({"error": "Error"});
+	});
 });
 
 app.post("/edit-user", (req, res) => {

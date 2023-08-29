@@ -1,13 +1,9 @@
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-const clanName = urlParams.get('clanName');
-
-fetch(`/clan-info?clanName=${clanName}`).then((response) => {
+fetch(`/clan-info?unique_id=${clan_id}`).then((response) => {
     return response.json();
 })
 .then((body) => {
-    document.getElementById('clan').textContent = "Welcome to " + clanName + " page!";
-    document.getElementById('clanName').innerHTML = "<b>Clan Name: </b>: " + clanName;
+    document.getElementById('clan').textContent = "Welcome to " + body.rows[0].clan_name + " page!";
+    document.getElementById('clanName').innerHTML = "<b>Clan Name: </b>: " + body.rows[0].clan_name;
     document.getElementById('clanId').innerHTML = "<b>Clan ID: </b>: " + body.rows[0].unique_id;
     document.getElementById('clanDescription').innerHTML = "<b>Clan Description: </b>: " + body.rows[0].clan_description;
     const ifPublicElement = document.getElementById('ifPublic');
