@@ -425,7 +425,7 @@ app.get('/api/auth/steam/return', passport.authenticate('steam', {failureRedirec
 	pool.query(`INSERT INTO users (steamid, username, region, calendar, steamlink, profilepic, clans) 
 		VALUES($1, $2, $3, $4, $5, $6, $7)
 		ON CONFLICT(steamid) DO NOTHING`,
-        [req.user.id, req.user.displayName, 'Not set', '{"events":[]}', req.user.profileurl, req.user.avatarfull, '{}']
+        [req.user.id, req.user.displayName, 'Not set', '{"events":[]}', req.user.identifier, req.user._json.avatarfull, '{}']
     );
 	
     res.redirect('/dashboard');
@@ -443,22 +443,6 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
 
 app.get('/userInfo', ensureAuthenticated, (req, res) => {
 	res.sendFile(path.join(__dirname, '/private/userInfo/index.html'));
-});
-
-app.get("/internal-user-info", (req, res) => {
-	let token = getToken(req.cookies);
-	let userid = tokens[token];
-	res.status(200);
-	pool.query(
-		`SELECT * FROM users WHERE steamid = $1`,
-		[userid]
-	).then((result) => {
-		res.send(result.rows);
-	})
-	.catch((error) => {
-		res.status(500);
-		return res.json({"error": "Error"});
-	});
 });
 
 app.post("/edit-user", (req, res) => {
@@ -481,6 +465,7 @@ app.post("/edit-user", (req, res) => {
 
 app.get("/internal-user-info", (req, res) => {
     let userid = req.query.id;
+	console.log("Requested info from: " + userid);
 	
     pool.query(
 		`SELECT * FROM users WHERE steamid = $1`,
