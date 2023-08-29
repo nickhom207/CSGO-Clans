@@ -9,6 +9,8 @@ CREATE TABLE users (
 	username text,
 	region text,
     calendar json,
+	steamlink text,
+	profilepic text,
     clans text[],
 	UNIQUE(steamid)
 );
@@ -25,12 +27,12 @@ CREATE TABLE clans (
 
 
 -- Dummy data for users table:
-INSERT INTO users (steamid, username, region, calendar, clans) VALUES ('76561198025039300', 'Kenny', 'PA', '{"events":[]}', '{"7bd654a", "7bd654b", "7bd654c"}');
-INSERT INTO users (steamid, username, region, calendar, clans) VALUES ('76561198025039301', 'IronMan', 'PA', '{"events":[]}', '{"7bd654d", "7bd654e"}');
-INSERT INTO users (steamid, username, region, calendar, clans) VALUES ('76561198025039302', 'Batman', 'PA', '{"events":[]}', '{"7bd654a", "7bd654b", "7bd654c"}');
-INSERT INTO users (steamid, username, region, calendar, clans) VALUES ('76561198025039303', 'Superman', 'PA', '{"events":[]}', '{"7bd654d", "7bd654e"}');
-INSERT INTO users (steamid, username, region, calendar, clans) VALUES ('76561198025039304', 'Spiderman', 'PA', '{"events":[]}', '{"7bd654a", "7bd654b", "7bd654c"}');
-INSERT INTO users (steamid, username, region, calendar, clans) VALUES ('76561198025039305', 'Hulk', 'PA', '{"events":[]}', '{"7bd654d", "7bd654e"}');
+INSERT INTO users (steamid, username, region, calendar, steamlink, profilepic, clans) VALUES ('76561198025039300', 'Kenny', 'PA', '{"events":[]}', 'link', 'img', '{"7bd654a", "7bd654b", "7bd654c"}');
+INSERT INTO users (steamid, username, region, calendar, steamlink, profilepic, clans) VALUES ('76561198025039301', 'IronMan', 'PA', '{"events":[]}', 'link', 'img', '{"7bd654d", "7bd654e"}');
+INSERT INTO users (steamid, username, region, calendar, steamlink, profilepic, clans) VALUES ('76561198025039302', 'Batman', 'PA', '{"events":[]}', 'link', 'img', '{"7bd654a", "7bd654b", "7bd654c"}');
+INSERT INTO users (steamid, username, region, calendar, steamlink, profilepic, clans) VALUES ('76561198025039303', 'Superman', 'PA', '{"events":[]}', 'link', 'img', '{"7bd654d", "7bd654e"}');
+INSERT INTO users (steamid, username, region, calendar, steamlink, profilepic, clans) VALUES ('76561198025039304', 'Spiderman', 'PA', '{"events":[]}', 'link', 'img', '{"7bd654a", "7bd654b", "7bd654c"}');
+INSERT INTO users (steamid, username, region, calendar, steamlink, profilepic, clans) VALUES ('76561198025039305', 'Hulk', 'PA', '{"events":[]}', 'link', 'img','{"7bd654d", "7bd654e"}');
 
 
 -- Dummy data for clans table:

@@ -421,10 +421,10 @@ app.get('/api/auth/steam/return', passport.authenticate('steam', {failureRedirec
     console.log(tokens);
 	
 	//insert logged in user into database
-	pool.query(`INSERT INTO users (steamid, username, region, calendar, clans) 
-		VALUES($1, $2, $3, $4, $5)
+	pool.query(`INSERT INTO users (steamid, username, region, calendar, steamlink, profilepic, clans) 
+		VALUES($1, $2, $3, $4, $5, $6, $7)
 		ON CONFLICT(steamid) DO NOTHING`,
-        [req.user.id, req.user.displayName, 'Not set', '{"events":[]}', '{}']
+        [req.user.id, req.user.displayName, 'Not set', '{"events":[]}', req.user.profileurl, req.user.avatarfull, '{}']
     );
 	
     res.redirect('/dashboard');
