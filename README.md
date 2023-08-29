@@ -19,3 +19,4 @@ In order to easily run without entering your steam information:
    - 76561198025039303
    - 76561198025039304
    - 76561198025039305
+3. Click the submit button next to the textbox
