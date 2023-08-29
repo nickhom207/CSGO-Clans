@@ -33,7 +33,7 @@
 					document.getElementById("profile").href = body._json.profileurl;
 					fetch("/internal-user-info?id=" + body.id).then((response) => {
 						response.json().then(body => {
-							document.getElementById("region").value = body.result[0].region;
+							document.getElementById("region").value = body[0].region;
 						})
 					});
 				}
