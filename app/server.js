@@ -222,6 +222,21 @@ app.get("/clan-info", (req, res) => {
     }
 });
 
+app.get("/all-public-clan-info", (req, res) => {
+    res.status(200);
+    pool.query(
+        `SELECT * FROM clans where public = true`
+    ).then((result) => {
+        // row was successfully inserted into table
+        return res.json({"rows": result.rows});
+    })
+    .catch((error) => {
+        // something went wrong when inserting the row
+        res.sendStatus(500);
+        return res.json({"error": "Unknown error occurred."});
+    });
+});
+
 app.get("/user-name-info", (req, res) => {
     if (!req.query.steamID) {
         return res.sendStatus(400);
