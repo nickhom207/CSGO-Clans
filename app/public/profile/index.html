@@ -11,21 +11,25 @@
 		<p id="steamid">steamid here</p>
 		<p id="region">region here</p>
 		<a id="profile" target="_blank">Steam Profile</a>
-		<a href="/dashboard">Return to dashboard</a>
 	</div>
 	<script defer>
 		const queryString = window.location.search;
-		console.log(queryString);
 		const urlParams = new URLSearchParams(queryString);
 		const userid = urlParams.get('id');
 		console.log(userid);
 		fetch("/internal-user-info?id=" + userid).then((response) => {
 			response.json().then(body => {
-				console.log(body);
-				document.getElementById("name").textContent = body[0].username;
-				document.getElementById("steamid").textContent = "Steam ID: " + body[0].steamid;
-				//document.getElementById("pfp").src = body.photos[2].value;
-				//document.getElementById("profile").href = body._json.profileurl;
+				if(!body.hasOwnProperty("result")){
+					console.log("error fetching user data");
+				}
+				else {
+					console.log(body);
+					document.getElementById("name").textContent = body.result[0].username;
+					document.getElementById("steamid").textContent = "Steam ID: " + body.result[0].steamid;
+					document.getElementById("region").textContent = "Region: " + body.result[0].region;
+					document.getElementById("pfp").src = body.result[0].profilepic;
+					document.getElementById("profile").href = body.result[0].steamlink;
+				}
 			})
 		});
 	</script>

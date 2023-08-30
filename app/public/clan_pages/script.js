@@ -26,17 +26,5 @@ fetch(`/clan-info?unique_id=${clan_id}`).then((response) => {
             clanMembersElement.appendChild(row);
         });
     }
-
-    // const clanChatElement = document.getElementById('clanChat');
-    // for(let i = 0; i < body.rows[0].chat.length; i++){
-    //     clanChatElement.textContent += body.rows[0].chat[i] + "\n";
-    // }
-
-    // console.log(body.rows);
-
-
 });
-
-const clanNameElement = document.getElementById('clanName');
-clanNameElement.innerHTML = clanName;
 
