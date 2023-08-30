@@ -16,7 +16,7 @@ button.onclick = function () {
     formatMessage("sent", "You", message);
     chatBox.value = "";
     chatBox.focus();
-    socket.emit("sendMessage", {"message" : message, "user" : username, "clan_id" : clan_id});
+    socket.emit("sendMessage", {"message" : message, "user" : username, "clan_id" : clan_id, "user_id" : user_id});
 };
 
 socket.on("recieveMessage", (msg) => {

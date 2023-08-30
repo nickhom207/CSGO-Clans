@@ -292,32 +292,40 @@ app.post("/play-now", ensureAuthenticated, (req, res) => {
 
     if (unique_id !== null && unique_id !== "" && unique_id.length === 7) {
         pool.query(
-            `SELECT username FROM users WHERE steamid = $1`,
-            [tokens[token]]
+            `SELECT member_ids FROM clans WHERE unique_id = $1`,
+            [unique_id]
         ).then((result) => {
-            if (result.rows.length > 0) {
-                username = result.rows[0].username;
-                if (!playNow[unique_id]) {
-                    let timerid = setTimeout(() => {
-                        io.in(timeOutIds[timerid]).emit("play-cancel", playNow[unique_id]["players"].length);
-                        delete playNow[unique_id];
-                        delete timeOutIds[timerid];
-                    },30000);
-                    timeOutIds[timerid] = unique_id;
-                    let entry = {"players" : [username]};
-                    playNow[unique_id] = entry;
-                }
-                else {
-                    if (!playNow[unique_id]["players"].includes(username)) {
-                        playNow[unique_id]["players"].push(username)
+            if (result.rows.length > 0 && result.rows[0]["member_ids"].includes(tokens[token])) {
+                pool.query(
+                    `SELECT username FROM users WHERE steamid = $1`,
+                    [tokens[token]]
+                ).then((result) => {
+                    if (result.rows.length > 0) {
+                        username = result.rows[0].username;
+                        if (!playNow[unique_id]) {
+                            let timerid = setTimeout(() => {
+                                io.in(timeOutIds[timerid]).emit("play-cancel", playNow[unique_id]["players"].length);
+                                delete playNow[unique_id];
+                                delete timeOutIds[timerid];
+                            },30000);
+                            timeOutIds[timerid] = unique_id;
+                            let entry = {"players" : [username]};
+                            playNow[unique_id] = entry;
+                        }
+                        else {
+                            if (!playNow[unique_id]["players"].includes(username)) {
+                                playNow[unique_id]["players"].push(username)
+                            }
+                        }
+                        io.in(unique_id).emit("play-now", playNow[unique_id]);
+                        if (playNow[unique_id]["players"].length == 5) {
+                            io.in(unique_id).emit("players-found", playNow[unique_id]);
+                        }
                     }
-                }
-                io.in(unique_id).emit("play-now", playNow[unique_id]);
-                if (playNow[unique_id]["players"].length == 5) {
-                    io.in(unique_id).emit("players-found", playNow[unique_id]);
-                }
+                });
             }
         });
+
     }
 });
 
@@ -347,7 +355,7 @@ app.get("/clan-pages", ensureAuthenticated, (req, res) => {
             ).then((result) => {
                 if (result.rows.length > 0) {
                     username = result.rows[0].username;
-                    return res.render("pages/chat.ejs", {"clanid": unique_id, "user" : username});
+                    return res.render("pages/chat.ejs", {"clanid": unique_id, "user" : username, "id" : tokens[token]});
                 }
                 else {
                     return res.sendStatus(500);
@@ -367,8 +375,14 @@ io.on("connection", (socket) => {
         socket.join(clan_id);
     });
     socket.on("sendMessage", function(msg) {
-        console.log(msg);
-        socket.broadcast.to(msg.clan_id).emit("recieveMessage", {"message" : msg.message, "user" : msg.user, "clan_id" : msg.clan_id});
+        pool.query(
+            `SELECT member_ids FROM clans WHERE unique_id = $1`,
+            [msg.clan_id]
+        ).then((result) => {
+            if (result.rows.length > 0 && result.rows[0]["member_ids"].includes(msg["user_id"])) {
+                socket.broadcast.to(msg.clan_id).emit("recieveMessage", {"message" : msg.message, "user" : msg.user, "clan_id" : msg.clan_id});
+            }
+        });
     });
 });
 

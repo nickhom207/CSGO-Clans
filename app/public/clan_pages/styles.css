@@ -33,14 +33,14 @@
 }
 
 body {
-	margin: 2rem;
+	/* margin: 2rem; */
 }
 
 #members, #playNow table {
 	border-collapse: collapse;
 }
 
-#members th, td {
+#members th, #members td, #playNow td {
 	border: 1px solid black;
 	padding: 10px;
 }
