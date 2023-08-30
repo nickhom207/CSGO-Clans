@@ -1,4 +1,5 @@
-// var table = document.getElementById("clans");
+let steamID = "76561198025039301";
+
 var clanList = document.getElementById("clanList");
 
 
@@ -18,19 +19,18 @@ fetch(`/user-info?steamID=${steamID}`).then((response) => {
     document.getElementById("steamId").innerHTML = "<b>Steam ID</b>: " + steamID;
     document.getElementById("region").innerHTML = "<b>Region</b>: " + body.rows[0].region;
 
-    // body.rows[0].username
     console.log(body.rows[0].clans);
-    let clans = body.rows[0].clans;
 
     // display data
-    for(let i = 0; i < clans.length; i++){
-        fetch(`/user-clan-name-detail?clanID=${body.rows[0].clans[i]}`).then((response) => {
+    for(let i = 0; i < body.rows[0].clans.length; i++){
+        fetch(`/clan-info?unique_id=${body.rows[0].clans[i]}`).then((response) => {
             return response.json();
         })
         .then((body) => {
+            console.log(body)
             let button = document.createElement("button");
             button.textContent = body.rows[0].clan_name;
-            button.onclick = function(){clanInfoFun(clans[i])};
+            button.onclick = function(){clanInfoFun(body.rows[0].unique_id)}
             clanList.appendChild(button);
 
         });
@@ -38,6 +38,7 @@ fetch(`/user-info?steamID=${steamID}`).then((response) => {
 });
 
 
-function clanInfoFun(clanName){
-    window.location.href = `/clan-pages?unique_id=${clanName}`;
+function clanInfoFun(unique_id){
+    console.log(unique_id);
+    window.location.href = `/clan-pages?unique_id=${unique_id}`;
 }

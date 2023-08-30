@@ -114,6 +114,7 @@ app.post("/create-clan", (req, res) => {
 });
 
 app.post("/join-clan", (req, res) => {
+    console.log("HII")
     let {unique_id} = req.body;
     let token = getToken(req.cookies);
 
@@ -175,27 +176,27 @@ app.get("/user-info", (req, res) => {
     }
 });
 
-app.get("/user-clan-name-detail", (req, res) => {
-    if(req.query.clanID) {
-        res.status(200);
-        pool.query(
-            `SELECT clan_name FROM clans WHERE unique_id = $1`,
-            [req.query.clanID]
-        ).then((result) => {
-            // row was successfully inserted into table
-            return res.json({"rows": result.rows});
-        })
-        .catch((error) => {
-            // something went wrong when inserting the row
-            res.sendStatus(500);
-            return res.json({"error": "Unknown error occurred."});
-        });
-    }
-    else{
-        res.status(400);
-        return res.json({"error": "Invalid clanID"});
-    }
-});
+// app.get("/user-clan-name-detail", (req, res) => {
+//     if(req.query.clanID) {
+//         res.status(200);
+//         pool.query(
+//             `SELECT clan_name FROM clans WHERE unique_id = $1`,
+//             [req.query.clanID]
+//         ).then((result) => {
+//             // row was successfully inserted into table
+//             return res.json({"rows": result.rows});
+//         })
+//         .catch((error) => {
+//             // something went wrong when inserting the row
+//             res.sendStatus(500);
+//             return res.json({"error": "Unknown error occurred."});
+//         });
+//     }
+//     else{
+//         res.status(400);
+//         return res.json({"error": "Invalid clanID"});
+//     }
+// });
 
 app.get("/clan-info", (req, res) => {
     if (!req.query.unique_id) {
