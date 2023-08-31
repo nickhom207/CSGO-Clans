@@ -1,5 +1,3 @@
-let steamID = "76561198025039301";
-
 var clanList = document.getElementById("clanList");
 
 

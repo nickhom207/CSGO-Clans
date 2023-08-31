@@ -13,6 +13,7 @@ let br = document.createElement("br");
 button.onclick = function () {
     let chatBox = document.getElementById("chat");
     let message = chatBox.value;
+
     formatMessage("sent", "You", message);
     chatBox.value = "";
     chatBox.focus();
@@ -21,6 +22,15 @@ button.onclick = function () {
 
 socket.on("recieveMessage", (msg) => {
     formatMessage("recieve", msg.user, msg.message);
+});
+
+socket.on("previousMessages", (msg) => {
+    if (msg.user_id == user_id) {
+        formatMessage("sent", msg.user, msg.message);
+    }
+    else {
+        formatMessage("recieve", msg.user, msg.message);
+    }
 });
 
 function formatMessage(type, user, message) {

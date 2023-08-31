@@ -3,14 +3,14 @@ fetch(`/clan-info?unique_id=${clan_id}`).then((response) => {
 })
 .then((body) => {
     document.getElementById('clan').textContent = "Welcome to " + body.rows[0].clan_name + " page!";
-    document.getElementById('clanName').innerHTML = "<b>Clan Name: </b>: " + body.rows[0].clan_name;
-    document.getElementById('clanId').innerHTML = "<b>Clan ID: </b>: " + body.rows[0].unique_id;
-    document.getElementById('clanDescription').innerHTML = "<b>Clan Description: </b>: " + body.rows[0].clan_description;
+    document.getElementById('clanName').innerHTML = "<b >Clan Name: </b><br>" + body.rows[0].clan_name;
+    document.getElementById('clanId').innerHTML = "<b>Clan ID: </b><br>" + body.rows[0].unique_id;
+    document.getElementById('clanDescription').innerHTML = "<b>Clan Description: </b><br> " + body.rows[0].clan_description;
     const ifPublicElement = document.getElementById('ifPublic');
     if(body.rows[0].public){
-        document.getElementById('ifPublic').innerHTML = "<b>Clan Status: </b>: Public";
+        document.getElementById('ifPublic').innerHTML = "<b>Clan Status: </b><br> Public";
     }else{
-        document.getElementById('ifPublic').innerHTML = "<b>Clan Status: </b>: Private";
+        document.getElementById('ifPublic').innerHTML = "<b>Clan Status: </b><br> Private";
     }
 
     const clanMembersElement = document.getElementById('clanMembers');

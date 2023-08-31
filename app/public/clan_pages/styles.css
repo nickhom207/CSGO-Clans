@@ -1,10 +1,27 @@
 #messages {
     border-width:2px; 
     border:solid; 
-    width:75vw; 
-    height: 25vh;
+    width:60vw; 
+    height: 60vh;
     display: block;
-    overflow-y:auto
+    overflow-y:auto;
+    background-color:#292929;
+    border-radius: 3%;
+}
+
+#chat{
+    width:90%;
+    height:3vh;
+    background-color: #292929;
+    border-radius: 10%;
+    border-color: white;
+    border-style: solid;
+    color: white;
+}
+
+#msgBox button {
+    height:3vh;
+    width:7%;
 }
 
 #sent {
@@ -28,21 +45,27 @@
 }
 
 #msg {
+    word-wrap: break-word;
+    color:white;
     margin-top:0px;
     font-size: 1em;
 }
 
-body {
-	/* margin: 2rem; */
-}
-
-#members, #playNow table {
+#playNow table {
+    margin-right: .5vw;
+    margin-left: auto;
+    margin-top: 1vh;
 	border-collapse: collapse;
 }
 
-#members th, #members td, #playNow td {
-	border: 1px solid black;
+.pnum {
+	border: 1px solid white;
 	padding: 10px;
+}
+
+.pname {
+    color:plum;
+    padding-right: 1vw;
 }
 
 .form {
@@ -61,10 +84,75 @@ body {
 	margin: 1rem 0;
 }
 
-.scrollabletextbox {
-    height:250px;
-    width:500px;
-    font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
-    font-size: 82%;
-    overflow:scroll;
+#cinfo {
+    padding-right: 2vw;
+    min-width: 15vw;
+}
+
+#cname, #memberDiv, #playNow, #messageType {
+    text-align: center;
+    background-color: #292929;
+    border-radius: 3%;
+    color:white;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+}
+
+#cname {
+    margin-bottom:5vh;
+}
+
+#members td, #members th, #members {
+    text-align: center;
+}
+
+#members {
+    margin:auto;
+}
+
+#msgBox {
+    width: 63vw;
+}
+
+#info {
+    color:plum;
+}
+
+#pnow {
+    padding-left: 2vw;
+    min-width: 17vw;
+}
+
+#org {
+    margin-left:5px;
+    margin-right:5px;
+}
+
+#container {
+    opacity: 80%;
+}
+
+body {
+    background-image: url("../static/csgo.jpeg");
+    background-size: cover;
+    background-color: #121212;
+}
+h1 {
+    color:white;
+}
+
+#menu {
+    height: 3vh;
+    text-align: right;
+}
+
+#menu a {
+    color: lightgray;
+    margin-right: 1%;
+    text-decoration: none;
+    font-size: 1.5em;
+}
+
+#menu a:hover {
+    color:white;
 }

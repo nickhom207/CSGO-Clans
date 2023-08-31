@@ -1,0 +1,33 @@
+html, body {
+    text-align: center;
+    height: 98%;
+    width: 98%;
+}
+
+#container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+#id {
+    display: block;
+    margin: 0 auto;
+    background-color: #242424;
+    color:white;
+    text-align: center;
+    border-color: white;
+    width:15vw;
+    height:3vh;
+    margin-bottom: 2px;
+}
+
+#id::placeholder {
+    color:white;
+}
+
+#id:hover {
+    border-color:wheat;
+}

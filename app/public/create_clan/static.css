@@ -1,0 +1,59 @@
+#clan_name {
+    background-color: #242424;
+    color:white;
+    display: block;
+    margin: 0 auto;
+    width:50vw;
+    height:5vh;
+    text-align: center;
+}
+
+#clan_desc {
+    display: block;
+    margin: 0 auto;
+    background-color: #242424;
+    color:white;
+    width:50vw;
+    height:20vh;
+    text-align: center;
+}
+
+#clan_name::placeholder {
+    color:white;
+}
+
+#clan_desc::placeholder {
+    color:white;
+}
+
+#clan_name:hover {
+    border-color:wheat;
+}
+
+#clan_desc:hover {
+    border-color:wheat;
+}
+
+#submit {
+    display: block;
+    margin: 0 auto;
+}
+
+#public {
+    display: block;
+    margin: 0 auto;
+}
+
+html, body {
+    text-align: center;
+    height: 98%;
+    width: 98%;
+}
+
+#container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}

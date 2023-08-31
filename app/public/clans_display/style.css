@@ -7,14 +7,14 @@ table {
 }
 
 th, td {
-	border: 1px solid black;
+	border: 1px solid white;
 	padding: 10px;
 }
 
 .form {
 	padding: 1rem;
 	margin: 2rem 0;
-	border: 1px solid black;
+	border: 1px solid white;
 }
 .form label {
 	font-weight: bold;
@@ -25,4 +25,18 @@ th, td {
 
 #message {
 	margin: 1rem 0;
+}
+
+#privateClanJoin {
+    border-color: white;
+    background-color: #242424;
+    color:white;
+}
+
+#privateClanJoin::placeholder {
+    color:white;
+}
+
+#privateClanJoin:hover {
+    border-color: wheat;
 }

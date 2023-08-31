@@ -1,8 +1,10 @@
 let play_now = document.getElementById("play");
 let pmeter = [];
+let pname = [];
 
 for (let i = 0; i < 5; i++) {
     pmeter.push(document.getElementById(i+1));
+    pname.push(document.getElementById(String(i+1) + "Name"));
 }
 
 play_now.onclick = function() {
@@ -15,7 +17,8 @@ play_now.onclick = function() {
 
 socket.on("play-cancel", message => {
     for (let i = 0; i < 5; i++) {
-        pmeter[i].style.backgroundColor = "white";
+        pmeter[i].style.backgroundColor = "transparent";
+        pname[i].textContent = "";
     }
     if (message!= 5) {
         alert("Not Enough Players found");
@@ -28,6 +31,7 @@ socket.on("play-now", message => {
         let num = message["players"].length;
         for (let i = 0; i < num; i++) {
             pmeter[i].style.backgroundColor = "green";
+            pname[i].textContent = message["players"][i];
         }
     }   
     

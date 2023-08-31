@@ -2,16 +2,19 @@
 <head>
     <meta charset="utf-8" />
     <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="static/styles.css" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 
 <body>
-    <input type="text" id = "id" placeholder="Enter steamid (TEMPORARY)">
-    <button id = "submit" onclick="onSubmit()"> Submit (TEMPORARY) </button>
-
-    <input type="text" id = "unique" placeholder="Enter uniqueid (TEMPORARY)">
-    <button id = "submit" onclick="temp()"> Join Clan (TEMPORARY) </button>
-	
-	<a href="/api/auth/steam"><img alt="Sign in through Steam" src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png"></a>
+    <div id="container">
+        <div id="content">
+            <a href="/api/auth/steam"><img alt="Sign in through Steam" src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png"></a>
+            <br><br>
+            <input type="text" id = "id" placeholder="Enter steamid (TEMPORARY)">
+            <button id = "submit" onclick="onSubmit()"> Submit (TEMPORARY) </button>
+        </div>
+    </div>
 
     <script>
         function onSubmit() {
@@ -20,22 +23,8 @@
             fetch("/login-page", {method: "POST", headers: {"Content-Type": "application/json"}, body: loginInfo}
             ).then((response) => {
                 respCode = response.status;
-                console.log(respCode);
-            });
-        }
-
-
-
-        function temp() {
-            let id = document.getElementById("unique").value;
-            let info = JSON.stringify({"unique_id" : id});
-            fetch("/join-clan", {method: "POST", headers: {"Content-Type": "application/json"}, body: info}
-            ).then((response) => {
-                respCode = response.status;
-                return response.text();
-            }).then((body) => {
-                if (respCode != 200) {
-                    console.log(body);
+                if (respCode == 200) {
+                    window.location.href = "/user-profile"
                 }
             });
         }

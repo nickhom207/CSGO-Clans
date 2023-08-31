@@ -2,17 +2,29 @@
 <head>
     <meta charset="utf-8" />
     <title>Create Clan</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link rel="stylesheet" type="text/css" href="static.css">
 </head>
 
 <body>
-    <input type="text" id="clan_name" placeholder="Insert Clan Name" required> <br>
-    <textarea id="clan_desc" rows="4" columns="50" placeholder="Insert Clan Description(100 character max)" maxlength="100"></textarea> <br>
-
-    <label for="public">Do you want this clan to be public?</label>
-    <input type="checkbox" id="public" name="public"> <br>
-
-
-    <button id="submit"> Create Clan </button>
-    <p id="works"></p>
+    <nav id="menu">
+        <a href="../../clans_display"> Join Clan </a>
+        <a href="/../create_clan"> Create Clan </a>
+        <a href="/../user-profile"> Profile </a>
+        <a href="/logout"> Log Out </a>
+    </nav>
+    <div id="container">
+        <div id = "content">
+            <input type="text" id="clan_name" placeholder="Insert Clan Name" required> <br>
+            <textarea id="clan_desc" rows="4" columns="50" placeholder="Insert Clan Description(100 character max)" maxlength="100"></textarea> <br>
+        
+            <label id="publicl" for="public">Do you want this clan to be public?</label>
+            <input type="checkbox" id="public" name="public"> <br>
+        
+        
+            <button id="submit"> Create Clan </button>
+            <p id="works"></p>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>

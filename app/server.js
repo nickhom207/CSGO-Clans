@@ -176,28 +176,6 @@ app.get("/user-info", (req, res) => {
     }
 });
 
-// app.get("/user-clan-name-detail", (req, res) => {
-//     if(req.query.clanID) {
-//         res.status(200);
-//         pool.query(
-//             `SELECT clan_name FROM clans WHERE unique_id = $1`,
-//             [req.query.clanID]
-//         ).then((result) => {
-//             // row was successfully inserted into table
-//             return res.json({"rows": result.rows});
-//         })
-//         .catch((error) => {
-//             // something went wrong when inserting the row
-//             res.sendStatus(500);
-//             return res.json({"error": "Unknown error occurred."});
-//         });
-//     }
-//     else{
-//         res.status(400);
-//         return res.json({"error": "Invalid clanID"});
-//     }
-// });
-
 app.get("/clan-info", (req, res) => {
     if (!req.query.unique_id) {
         return res.sendStatus(400);
@@ -275,6 +253,19 @@ app.get("/user-clan", ensureAuthenticated, (req, res) => {
 
     let steamid = tokens[token];
     return res.render("pages/userClan.ejs", {"steamid": steamid});
+});
+
+app.get("/user-profile", ensureAuthenticated, (req,res) => {
+    if (!req.session.id) {
+        return res.sendStatus(400);
+    }
+    let token = req.session.id;
+    if (!tokens[token]) {
+        return res.sendStatus(400);
+    }
+
+    let steamid = tokens[token];
+    return res.render("pages/userProfile.ejs", {"steamid": steamid});
 });
 
 let playNow = {};
@@ -374,6 +365,16 @@ io.on("connection", (socket) => {
     socket.emit("message", "test");
     socket.on("join", function(clan_id) {
         socket.join(clan_id);
+        pool.query(
+            `SELECT clan_chat FROM clans WHERE unique_id = $1`,
+            [clan_id]
+        ).then((result) => {
+            if (result.rows[0]) {
+                for (const element of result.rows[0]["clan_chat"]) {
+                    io.sockets.to(socket.id).emit("previousMessages", {"message" : element.message, "user" : element.user, "clan_id" : element.clan_id, "user_id" : element.user_id});  
+                }
+            }
+        });
     });
     socket.on("sendMessage", function(msg) {
         pool.query(
@@ -382,6 +383,10 @@ io.on("connection", (socket) => {
         ).then((result) => {
             if (result.rows.length > 0 && result.rows[0]["member_ids"].includes(msg["user_id"])) {
                 socket.broadcast.to(msg.clan_id).emit("recieveMessage", {"message" : msg.message, "user" : msg.user, "clan_id" : msg.clan_id});
+                pool.query(`UPDATE clans
+                SET clan_chat = ARRAY_APPEND(clan_chat, $1) 
+                WHERE unique_id = $2;`,
+                [msg,msg.clan_id]);
             }
         });
     });
@@ -421,15 +426,15 @@ app.get("/logout", (req, res) => {
   req.logout(req.user, err => {
     if(err)
 		return next(err);
-    res.redirect("/login");
+    res.redirect("/");
   });
 });
 
-app.get('/api/auth/steam', passport.authenticate('steam', {failureRedirect: '/login'}), function (req, res) {
-	res.redirect('/dashboard')
+app.get('/api/auth/steam', passport.authenticate('steam', {failureRedirect: '/'}), function (req, res) {
+	res.redirect('/user-profile')
 });
 
-app.get('/api/auth/steam/return', passport.authenticate('steam', {failureRedirect: '/login'}), function (req, res) {
+app.get('/api/auth/steam/return', passport.authenticate('steam', {failureRedirect: '/'}), function (req, res) {
     if (tokens[req.session.id] === undefined) {
         tokens[req.session.id] = req.user.id;
     }
@@ -442,12 +447,12 @@ app.get('/api/auth/steam/return', passport.authenticate('steam', {failureRedirec
         [req.user.id, req.user.displayName, 'Not set', '{"events":[]}', req.user.identifier, req.user._json.avatarfull, '{}']
     );
 	
-    res.redirect('/dashboard');
+    res.redirect('/user-profile');
 });
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
+  res.redirect('/');
 }
 
 const path = require('path');

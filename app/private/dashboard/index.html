@@ -2,15 +2,16 @@
 <head>
     <meta charset="utf-8" />
     <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
 </head>
 
 <body>
-	<div class="topnav">
-		<a href="/dashboard">Dashboard</a>
-		<a id="name" href="/userInfo">text</a>
-		<img id="pfp"></img>
-		<a href="/logout">Log out</a>
-	</div>
+    <nav id="menu">
+        <a href="../../clans_display"> Join Clan </a>
+        <a href="/../create_clan"> Create Clan </a>
+        <a href="/../user-profile"> Profile </a>
+        <a href="/logout"> Log Out </a>
+    </nav>
 	
 	<script defer>
 		fetch("/user").then((response) => {

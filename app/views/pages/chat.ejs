@@ -6,62 +6,79 @@
 </head>
 
 <body>
-    <h1 id="clan"></h1>
-    <table>
-        <tr>
-            <td>
-                <p id="clanName"> </p>
-                <p id="clanId"> </p>
-                <p id="clanDescription"> </p>
-                <p id="ifPublic"> </p>
-            
-            
-                <table id = "members">
-                    <thead>
-                        <tr><th>Clan Members</th></tr>
-                    </thead>
-                    <tbody id="clanMembers"></tbody>
-                </table>
-            </td>
+    <div id="menuContainer">
+        <nav id="menu">
+            <a href="../../clans_display"> Join Clan </a>
+            <a href="/../create_clan"> Create Clan </a>
+            <a href="/../user-profile"> Profile </a>
+            <a href="/logout"> Log Out </a>
+        </nav>
+    </div>
+    <div id="container">
+        <h1 id="clan"></h1>
+        <table id="org">
+            <tr>
+                <td id = "cinfo">
+                    <div id="cname">
+                        <p id="clanName"> </p>
+                        <p id="clanId"> </p>
+                        <p id="clanDescription"> </p>
+                        <p id="ifPublic"> </p>
+                    </div>
+                    
+                    <div id="memberDiv">
+                        <table id = "members">
+                            <thead>
+                                <tr><th>Clan Members</th></tr>
+                            </thead>
+                            <tbody id="clanMembers"></tbody>
+                        </table>
+                    </div>
+                </td>
 
-            <td>
-                <div id="messages" ></div>
-                <br>
-                <input type="text" id="chat">
-                <button id="submit"> Send </button>
-            </td>
+                <td id = "msgBox">
+                    <div id="messages" ></div>
+                    <br>
+                    <div id="messageType">
+                        <input type="text" id="chat">
+                        <button id="submit"> Send </button>
+                    </div>
+                </td>
 
-            <td>
-                <div id="playNow">
-                <table>
-                    <tr> <td id="1"> P1 </td> </tr>
-                    <tr> <td id="2"> P2 </td> </tr>
-                    <tr> <td id="3"> P3 </td> </tr>
-                    <tr> <td id="4"> P4 </td> </tr>
-                    <tr> <td id="5"> P5 </td> </tr>
-                </table>
-                <button id="play"> Play Now? </button>
-                <div id="players">
-        
-                </div>
-            </div>
-            </td>
+                <td id="pnow">
+                    <div id="playNow">
+                        <button id="play"> Play Now? </button>
+                        <table>
+                            <tr> 
+                                <td id="1Name" class="pname"> </td> 
+                                <td id="1" class="pnum"> P1 </td> 
+                            </tr>
+                            <tr> 
+                                <td id="2Name" class="pname"> </td> 
+                                <td id="2" class="pnum"> P2 </td>       
+                            </tr>
+                            <tr> 
+                                <td id="3Name" class="pname"> </td> 
+                                <td id="3" class="pnum"> P3 </td> 
+                            </tr>
+                            <tr> 
+                                <td id="4Name" class="pname"> </td>  
+                                <td id="4" class="pnum"> P4 </td>
+                            </tr>
+                            <tr> 
+                                <td id="5Name" class="pname"> </td> 
+                                <td id="5" class="pnum"> P5 </td>
+                            </tr>
+                        </table>
+                        <div id="players">
+                
+                        </div>
+                    </div>
+                </td>
 
-        </tr>
-        <tr>
-
-        </tr>
-        <tr>
-            
-        </tr>
-    </table>
-    
-
-
-    <br>
-    <br>
-
-
+            </tr>
+        </table>
+    </div>
 
     <script>
         let clan_id = '<%= clanid  %>';
