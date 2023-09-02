@@ -114,7 +114,6 @@ app.post("/create-clan", (req, res) => {
 });
 
 app.post("/join-clan", (req, res) => {
-    console.log("HII")
     let {unique_id} = req.body;
     let token = getToken(req.cookies);
 
