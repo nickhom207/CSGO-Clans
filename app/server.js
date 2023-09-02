@@ -38,7 +38,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 let apiKey = env["api_key"];
-let baseUrl = env["api_url"];
 
 const Pool = pg.Pool;
 const pool = new Pool(env);
