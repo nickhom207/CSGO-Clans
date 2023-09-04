@@ -8,8 +8,7 @@
 6. Open the env.json file in the root directory
 7. Change the password value to your postgres password
 8. Change the api_key value to the steam api_key 
-9. From the root directory run `psql --username <USERNAME> -f setup.sql` replace <USERNAME> with your postgres username to set up the database
-10. Cd into the app directory and run the command: node server.js
+9. Cd into the app directory and run the command: node server.js
 ------------------------------------------------------------------------------------------
 In order to easily run without entering your steam information:
 1. Vist this page: http://localhost:3000
